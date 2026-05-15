@@ -17,17 +17,28 @@ class JobSeeder extends Seeder
     public function run()
     {
         if(app() -> isLocal()){
-            Job::factory()
-                ->count(100)
-                ->sequence(function ($sequence){
-                    return[
-                        'name' => sprintf('JOB_%04d',$sequence -> index +1),
-                        'deleted_at' => null,
-                        'created_at' => '2022-12-30 11:22:33',
-                        'updated_at' => '2022-12-31 23:58:59',
-                    ];
-                })
-                -> create();
+            $jobs = [
+                'A',
+                'B',
+                'C',
+            ];
+            foreach($jobs as $name){
+                Job::create(['name'=>$name]);
+            }
+
         }
+// {
+//             Job::factory()
+//                 ->count(100)
+//                 ->sequence(function ($sequence){
+//                     return[
+//                         'name' => sprintf('JOB_%04d',$sequence -> index +1),
+//                         'deleted_at' => null,
+//                         'created_at' => '2022-12-30 11:22:33',
+//                         'updated_at' => '2022-12-31 23:58:59',
+//                     ];
+//                 })
+//                 -> create();
+//         }
     }
 }

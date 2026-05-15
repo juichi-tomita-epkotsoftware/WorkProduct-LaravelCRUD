@@ -6,94 +6,94 @@ use App\Http\Requests\StoreJobRequest;
 use App\Http\Requests\UpdateJobRequest;
 use App\Models\Job;
 use Illuminate\Support\Facades\Redirect;
-
+use Illuminate\Http\Request;
 class JobController extends Controller
+//求人データの操作担当クラス
 {
     /**
-     * Display a listing of the resource.
-     *
+     * Display a listing of the resource.(求人データの操作担当)
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        //一覧画面
-        $jobs =Job::orderByDesc('id')->paginate(20);
-        //jobsテーブルをid降順で取得した後、1ページ20件でページング
-        //getは全権取得だが、paginateは自動でページング機能がつく
-        return view('admin.jobs.index',[
-            'jobs'=> $jobs,
-        //不明　DBは触らず空のフォーム画面を返すだけ。保存はstore()が担当
-        //Laravelでは/の代わりに.でフォルダ階層を表す
-        //view()の第2引数でコントローラからBladeへデータ渡す
-        ]);
-    }
-        //view()：()内のBlade部分をHTMLに変換させる関数
-        //view(Bladeの位置,Bladeに渡すデータ)
-        //Laravelのコントローラーでは、自分でechoするのではなく、returnでviewを渡すのがルール
+
+    /**デフォルトの一覧表示 */
+    // public function index()
+    // {
+    //     $jobs = Job::orderByDesc('id')->paginate(20);
+    //     //jobsテーブルをid降順で取得した後、1ページ20件でページング
+    //     //getは全権取得だが、paginateは自動でページング機能がつく
+    //     return view('admin.jobs.index', [
+    //         'jobs' => $jobs,
+    //         /**
+    //      * view('どのBladeを使うか','Bladeに渡すデータ')
+    //      * Blade側ではデータは$jobsという名前で使える(配列キー名がそのままBlade変数名になる)
+    //      */
+    //     ]);
+    // }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created resource in storage.(新規作成フォーム表示)
      *
-     * @param  \App\Http\Requests\StoreJobRequest  $request
+     * @param  \App\Http\Requests\StoreJobRequest
      * @return \Illuminate\Http\Response
      */
-
-
     public function create()
     {
-        // 新規"画面"
+        //create.blade.php(新規画面)をHTML変換してブラウザに変える
+        //Laravelのビュー呼び出しルールでドットがフォルダ区切りになっている
         return view('admin.jobs.create');
     }
+    /**
+     * DBへ新規登録
+     *
+     */
 
     public function store(StoreJobRequest $request)
     {
-        //新規"登録"
         $job = Job::create([
-            'name' => $request -> name
-            //nameという項目にリクエスト中のnameの値をいれる
+            'name' => $request->name
+            //nameというカラムに$requestを追加。この時点でバリデーションが実施されている。
+            //$requestはnameメソッドで処理
         ]);
         return redirect(
-            route('admin.jobs.show',['job' =>$job])
-        )->with('messages.success','新規登録が完了しました。');
+            route('admin.jobs.index')
+            // route('admin.jobs.show',['job' =>$job])
+        )->with('messages.success', '新規登録が完了しました。');
+        //redirectで保存完了後、詳細画面(show)にリダイレクト
+        //['job'=>$job]で「どのレコードの詳細画面か」をURLに埋め込む
     }
-    //->は後に処理をつなげる記号　オブジェクトA->メソッドB():Aというオブジェクトに対しBという処理を実行
-
 
     /**
-     * Display the specified resource.
+     * Display the specified resource.(1件詳細表示)
      *
-     * @param  \App\Models\Job  $job
+     * @param  \App\Models\Job
      * @return \Illuminate\Http\Response
+     * 詳細画面　新規画面とは違い1件のみ表示させたいのでshow関数を用いる
+     * 新規画面ではすでに存在しているデータがないけど、詳細画面は既存データが必要なので$jobが引数に必要
+     * Laravelが自動でＤＢからデータ取得し変数に格納：ルートモデルバインディング
      */
 
-    // 詳細画面　新規画面とは違い1件のみ表示させたいのでshow関数を用いる
-    //新規画面ではすでに存在しているデータがないけど、詳細画面は既存データが必要なので$jobが必要
-    //Laravelが自動でＤＢからデータ取得し変数に格納：ルートモデルバインディング
     public function show(Job $job)
-    //Job
-    //$job
     {
-
         return view('admin.jobs.show', [
             'job' => $job,
         ]);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Show the form for editing the specified resource.(編集フォーム表示)
      *
      * @param  \App\Models\Job  $job
      * @return \Illuminate\Http\Response
      */
     public function edit(Job $job)
     {
-        return view('admin.jobs.edit',[
+        return view('admin.jobs.edit', [
             'job' => $job,
         ]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified resource in storage.(DB更新)
      *
      * @param  \App\Http\Requests\UpdateJobRequest  $request
      * @param  \App\Models\Job  $job
@@ -104,13 +104,13 @@ class JobController extends Controller
         $job->name = $request->name;
         $job->update();
         return redirect(
-            route('admin.jobs.show',['job'=>$job])
-        )->with('message.success','更新が完了しました。');
+            route('admin.jobs.show', ['job' => $job])
+        )->with('message.success', '更新が完了しました。');
         //
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified resource from storage.(DB削除)
      *
      * @param  \App\Models\Job  $job
      * @return \Illuminate\Http\Response
@@ -122,18 +122,25 @@ class JobController extends Controller
         //削除が終われば一覧画面に戻る
     }
 
-
-//TSVダウンロード処理
+    /**
+     * TSVダウンロード(公開口)
+     *
+     * @return void
+     */
 
     public function downloadTsv()
     //公開口。処理を組み立てレスポンスを返す。
     {
         $csvRecords = self::getJobCsvRecords();
         //   CSVストリームダウンロード
-        return self::streamDownloadCsv('jobs.tsv', $csvRecords,"\t");
-
+        return self::streamDownloadCsv('jobs.tsv', $csvRecords, "\t");
     }
 
+    /**
+     * DBからデータ取得→2次元配列変換
+     *
+     * @return array
+     */
     private static function getJobCsvRecords(): array
     //DBからデータ受取、2次元配列に変換
     {
@@ -149,8 +156,12 @@ class JobController extends Controller
         return $csvRecords;
     }
 
+    /**
+     *ストリームダウンロード処理(汎用)
+     *
+     */
     private static function streamDownloadCsv(
-    //汎用的なダウンロード処理
+        //汎用的なダウンロード処理
         string $name,
         iterable $fieldsList,
         string $separator = ',',
@@ -168,11 +179,25 @@ class JobController extends Controller
         $headers = ['Content-Type' => $contentType];
 
         return response()->streamDownload(function () use ($fieldsList, $separator, $enclosure, $escape, $eol) {
-            $stream = fopen('php://output', 'w');
+            $stream = fopen('php://output', 'w');       //fopen(開く対象,モード wは書き込み):ファイルを開くPHP標準関数
             foreach ($fieldsList as $fields) {
-                fputcsv($stream, $fields, $separator, $enclosure, $escape, $eol);
+                fputcsv($stream, $fields, $separator, $enclosure, $escape, $eol);   //fputcsv:CSV形式で1行書き出す関数
             }
-            fclose($stream);
+            fclose($stream);    //fopenでの処理を終了させる
         }, $name, $headers);
+    }
+    public function index(Request $request)
+    {
+        $keyword = $request->input('keyword');
+        $jobs = Job::orderByDesc('id')
+            ->when($keyword, function ($query) use ($keyword) {
+                $query->where('name', 'like', "%{$keyword}%");
+            })
+            ->paginate(20);
+
+        return view('admin.jobs.index',[
+            'jobs' => $jobs,
+            'keyword' => $keyword,
+        ]);
     }
 }

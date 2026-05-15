@@ -6,28 +6,27 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
+//無名クラスという書き方
 {
     /**
-     * Migration:PHPのコードでDBのテーブル構造を定義し、コマンド一発で作成・変更できる仕組み
-     *
      * @return void
      * この関数は何も返さないというメモ
-     *
-     * @return string　　文字列を返す
-     * @return int　　　数値を返す
-     *
      */
-    public function up()
+    public function up()    //migrate実行時
     {
-        $tableName = 'jobs';
+        $tableName = 'jobs';        //テーブル名を変数に入れておく
         Schema::create($tableName, function (Blueprint $table) {
-            // 第2引数としてコールバック関数と、クラスBlueprint（型宣言）が渡されている
-            //コールバック関数：「あとで処理する関数」関数を呼ばず、渡している。
+            // 第2引数：コールバック関数(あとで処理する関数)が渡されている。引数はクラスBlueprintと型宣言されている
+
+            //カラム定義
             $table->id() -> comment('ID');
             $table->string('name') -> comment('名称');
+            //nameが'カラム名'    名称は'説明文'
             $table->softDeletes() -> comment('消去日時');
             $table->timestamp('created_at') -> nullable() -> comment('作成日時');
             $table->timestamp('updated_at') -> nullable() -> comment('更新日時');
+            //TIMESTAMP型のカラム作成
+            //nullable()→NULLを許可する
         });
         DB::statement("ALTER TABLE {$tableName} COMMENT '職業'");
         //statementの引数は任意のSQL文１つ
@@ -38,7 +37,7 @@ return new class extends Migration
      * 「テーブルが存在すれば削除する」 メソッド
      * @return void
      */
-    public function down()
+    public function down()  //migrate:rollback実行時
     {
         Schema::dropIfExists('jobs');
     }

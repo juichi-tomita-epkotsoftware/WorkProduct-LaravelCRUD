@@ -20,7 +20,8 @@
         <a href="{{ route('admin.jobs.create') }}" class="btn btn-primary">新規</a>
         <form action="{{ route('admin.jobs.csv') }}" method="POST" style="display:inline;">
           @csrf
-          <!-- フォームを送信するとき、「本当にこのサイトから送られたリクエストか」を確認するためのトークン -->
+          <!-- フォームを送信するとき、「本当にこのサイトから送られたリクエストか」を確認するためのトークン
+           -->
           <button type="submit" class="btn btn-primary">CSV</button>
         </form>
         <form action="{{ route('admin.jobs.tsv') }}" method="POST">
@@ -34,6 +35,10 @@
 <div class="table-responsive">
   <p>{{ $jobs->total() }}&nbsp;件</p>
   <!-- この変数はコントローラーがDBから取得しBladeに渡す-->
+  <form method="GET" action="{{ route('admin.jobs.index') }}">
+      <input type="text" name="keyword" value="{{ $keyword ?? '' }}" placeholder="名称で検索">
+      <button type="submit">検索</button>
+  </form>
   <table class="table table-striped table-sm">
     <thead>
       <tr>

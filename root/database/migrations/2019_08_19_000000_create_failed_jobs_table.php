@@ -5,15 +5,16 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
+//無名クラスという書き方
 {
     /**
      * Run the migrations.
-     *
      * @return void
      */
     public function up()
     {
         Schema::create('failed_jobs', function (Blueprint $table) {
+            // カラムを作成・指定
             $table->id();
             $table->string('uuid')->unique();
             $table->text('connection');
@@ -26,7 +27,6 @@ return new class extends Migration
 
     /**
      * Reverse the migrations.
-     *
      * @return void
      */
     public function down()
