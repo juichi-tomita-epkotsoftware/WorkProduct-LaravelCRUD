@@ -135,6 +135,16 @@ class JobController extends Controller
         //   CSVストリームダウンロード
         return self::streamDownloadCsv('jobs.tsv', $csvRecords, "\t");
     }
+    /**
+     * CSVダウンロード(公開口)
+     *
+     * @return void
+     */
+    public function downloadCsv()
+    {
+        $csvRecords = self::getJobCsvRecords();
+        return self::streamDownloadCsv('jobs.csv', $csvRecords, ',');
+    }
 
     /**
      * DBからデータ取得→2次元配列変換
