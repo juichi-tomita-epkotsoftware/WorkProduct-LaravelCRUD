@@ -24,8 +24,10 @@ class RemindController extends Controller
     //登録処理
     public function store(Request $request)
     {
+        //送信されたデータが正しいか検証
         $request->validate([
             'title'     => 'required|string|max:100',
+            'category'     => 'required|in:Kitchen,Shower Room,Work Space,Trash,The other',
             'comment'     => 'required|string|max:1000',
             'image'     => 'nullable|image|max:2048',
             'remind_date'     => 'required|date',
@@ -38,6 +40,7 @@ class RemindController extends Controller
 
     Remind::create([
         'title'     => $request->title,
+        'category'     => $request->category,
         'comment'     => $request->comment,
         'image_path'     => $imagePath,
         'remind_date'     => $request->remind_date,

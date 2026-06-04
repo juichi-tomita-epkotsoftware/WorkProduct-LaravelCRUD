@@ -11,6 +11,7 @@ class Remind extends Model
         'title',
         'comment',
         'image_path',
+        'category',
         'remind_date',
     ];
 

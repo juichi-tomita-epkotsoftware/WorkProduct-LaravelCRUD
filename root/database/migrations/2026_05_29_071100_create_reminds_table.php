@@ -19,6 +19,7 @@ return new class extends Migration
             $table->text('comment');
             $table->string('image_path')->nullable();
             //nullableはNULLを許可するメソッドのため()が無いと機能しない
+            $table->string('category');
             $table->date('remind_date');
             $table->timestamps();
         });
