@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     unzip \
     vim \
     zip \
-    npm \
+    curl \
     && apt-get -y clean \
     # PDO driver インストール(mysql)
     && docker-php-ext-install pdo_mysql \
@@ -18,3 +18,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && a2enmod rewrite \
     # DocumentRoot 変更
     && sed -i 's!/var/www/html!/var/www/root/public!g' /etc/apache2/sites-available/000-default.conf
+
+# Node.js 18インストール
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs

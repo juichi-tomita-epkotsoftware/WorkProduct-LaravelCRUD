@@ -1,5 +1,4 @@
 <?php
-use App\Http\Controllers\JobController;
 use App\Http\Controllers\ResidentController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
