@@ -130,6 +130,9 @@ class ResidentController extends Controller
      */
     public function edit(Resident $resident)
     {
+        if($resident->user_id !== auth()->id()){
+            abort(403,'他のユーザーのデータは編集できません');
+        }
         return view('admin.residents.edit',compact('resident'));
     }
 
@@ -140,8 +143,14 @@ class ResidentController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Resident $resident)
+    public function update(Request $request, Resident $resident,$id)
     {
+        $resident = Resident::findOrfail($id);
+
+        if($resident->user_id !== auth()->id()){
+            abort(403);
+        }
+
         $request->validate([
             'name'  =>  'required|string|max:100',
             'job'  =>  'required|string|max:100',

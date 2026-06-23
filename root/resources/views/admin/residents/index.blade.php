@@ -50,12 +50,16 @@
         <td>{{ $resident->age }}</td>
         <td>
 
+            @if($resident->user_id === auth()->id())
             <a href="{{ route('admin.residents.edit', $resident) }}">Edit</a>
             <form action="{{ route('admin.residents.destroy', $resident) }}" method="POST" style="display:inline">
                 @csrf
                 @method('DELETE')
                 <button type="submit" style="background: none; border:none;padding:0;color:#0d6efd;cursor: pointer;font-size:inherit;" >Delete</button>
             </form>
+            @else
+            <span class="text-muted">編集不可</span>
+            @endif
         </td>
     </tr>
     @endforeach
